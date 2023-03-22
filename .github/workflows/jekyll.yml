@@ -6,7 +6,7 @@ name: CI
 on:
   push:
     branches:
-      - feat-test
+      - main
     tags:
       - 'v*'
 
@@ -45,17 +45,7 @@ jobs:
           git add -A
           git commit -m "auto deploy, $commit_info"
           remote_addr=`echo $remote_addr | awk -F'://' '{print $2}'`
-          remote_addr=https://${user_name}:${{secrets.GITHUB_TOKEN}}@${remote_addr}
+          remote_addr=https://${user_name}:${{secrets.DEPOLY_PAGES}}@${remote_addr}
           git remote add origin ${remote_addr}
           git push origin HEAD:$deploy_branch --force # 推送到github $deploy_branch分支
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: false
-          prerelease: false
       # 只提交到github pages也可以使用github-pages-deploy-action，详见: https://github.com/JamesIves/github-pages-deploy-action
