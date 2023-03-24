@@ -32,7 +32,7 @@ jobs:
           user_name=`git log -1 --pretty=format:'%an'`
           user_email=`git log -1 --pretty=format:'%ae'`
           deploy_branch=gh-pages
-          yarn
+          yarn ci
           yarn build
           cd docs/.vuepress/dist
           git config --global init.defaultBranch $deploy_branch
@@ -52,10 +52,7 @@ jobs:
           npm --version
           npx commitlint --version
       - name: Install commitlint
-        run: |
-          npm install conventional-changelog-conventionalcommits
-          npm install @commitlint/config-conventional
-          npm install commitlint@latest
+        run: npm ci
 
       - name: Validate current commit (last commit) with commitlint
         if: github.event_name == 'push'
@@ -64,4 +61,19 @@ jobs:
       - name: Validate PR commits with commitlint
         if: github.event_name == 'pull_request'
         run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
+      
+      - name: Run standard-version
+        run: npx standard-version --skip.commit -m "%s [skip ci]"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+          force: true
+
+      - name: Create new tag
+        run: |
+          git tag -a $(npx -q semver --preid beta $(npx -q semver --increment prerelease $(git describe --abbrev=0 --tags --match "v[0-9]*" HEAD))) -m "Version $(git describe --abbrev=0 --tags --match "v[0-9]*" HEAD)"
+          git push --tags
       # 只提交到github pages也可以使用github-pages-deploy-action，详见: https://github.com/JamesIves/github-pages-deploy-action
