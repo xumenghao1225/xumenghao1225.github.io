@@ -7,8 +7,6 @@ on:
   push:
     branches:
       - main
-    tags:
-      - 'v*'
 
 env: # 设置环境变量
   TZ: Asia/Shanghai # 时区（设置时区可使页面中的`最近更新时间`使用该时区时间）
@@ -48,4 +46,11 @@ jobs:
           remote_addr=https://${user_name}:${{secrets.GITHUB_TOKEN}}@${remote_addr}
           git remote add origin ${remote_addr}
           git push origin HEAD:$deploy_branch --force # 推送到github $deploy_branch分支
+      - name: Create Tag
+        id: create_tag
+        run: echo ::set-output name=tag::$(git describe --tags --abbrev=0 | awk -F. '{print $1"."$2"."$3+1}')
+      
+      - name: Push Tag
+        if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'
+        run: git tag ${{ steps.create_tag.outputs.tag }} && git push origin ${{ steps.create_tag.outputs.tag }}
       # 只提交到github pages也可以使用github-pages-deploy-action，详见: https://github.com/JamesIves/github-pages-deploy-action
