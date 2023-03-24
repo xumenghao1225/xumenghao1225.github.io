@@ -63,8 +63,17 @@ jobs:
         run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
       
       - name: Run standard-version
-        run: npx standard-version --skip.commit -m "%s [skip ci]"
+        run: |
+          user_name=`git log -1 --pretty=format:'%an'`
+          user_email=`git log -1 --pretty=format:'%ae'`
 
+          git init
+          git config user.name ${user_name}
+          git config user.email ${user_email}
+
+          npx standard-version --skip.commit -m "%s [skip ci]"
+        with: 
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
