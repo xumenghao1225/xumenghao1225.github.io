@@ -44,13 +44,16 @@ jobs:
           git push origin HEAD:$deploy_branch --force # 推送到github $deploy_branch分支
       - name: Delete directory
         run: rm -rf docs/.vuepress/dist
+      - name: checkout branche
+        run: |
+          git checkout main
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v3
         with:
           title: "$commit_info"
           body: "This pull request adds a new feature to the project."
-          branch: origin/feat-test
+          branch: refs/heads/feat-test
           base: main
           token: ${{ secrets.GITHUB_TOKEN }}
       
