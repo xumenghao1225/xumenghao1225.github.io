@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Use Node.js ${{ matrix.node-version }} # 步骤2
-        uses: actions/setup-node@v1 # 作用：安装nodejs
+        uses: actions/setup-node@v2 # 作用：安装nodejs
         with:
           node-version: ${{ matrix.node-version }} # 版本
       - name: Build-and-deploy # 步骤3
@@ -51,7 +51,7 @@ jobs:
           title: "$commit_info"
           body: "This pull request adds a new feature to the project."
           branch: origin/feat-test
-          base: origin/main
+          base: main
           token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Run standard-version
