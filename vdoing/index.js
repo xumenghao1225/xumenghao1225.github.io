@@ -290,16 +290,3 @@ function withBase(path) {
     return path;
   }
 }
-
-
-function Person(name, age, job){
-  this.name = name;
-  this.age = age;
-  this.job = job;
-  this.sayName = function() {
-  console.log(this.name);
-  };
-  return {}
- }
- let person1 = new Person("Nicholas", 29, "Software Engineer");
- person1// Nicholas 
