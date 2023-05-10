@@ -41,12 +41,12 @@ export default defineConfig4CustomTheme<VdoingThemeConfig>({
               { text: '数据结构与算法', link: '/pages/Structure/' },
             ],
           },
-          // {
-          //   text: '学习笔记',
-          //   items: [
-          //     { text: '《JavaScript教程》', link: '/note/javascript/' },
-          //   ],
-          // },
+          {
+            text: 'vue3相关',
+            items: [
+              { text: '《JavaScript教程》', link: '/pages/5cb2ad/' },
+            ],
+          },
         ],
       },
       // {
