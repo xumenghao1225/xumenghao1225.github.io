@@ -50,8 +50,8 @@ jobs:
         with:
           title: "$remote_addr"
           body: "This pull request adds a new feature to the project."
-          branch: feat-test
-          base: main
+          branch: main
+          base: feat-test
           token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Run standard-version
