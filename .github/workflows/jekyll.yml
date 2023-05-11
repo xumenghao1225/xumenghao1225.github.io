@@ -1,12 +1,9 @@
-name: CI
+name: deploy and pull_request and release 
 
-#on: [push]
-
-# 在master分支发生push事件时触发。
 on:
   push:
     branches:
-      - main
+      - feat-test
 
 env: # 设置环境变量
   TZ: Asia/Shanghai # 时区（设置时区可使页面中的`最近更新时间`使用该时区时间）
@@ -16,19 +13,19 @@ jobs:
     runs-on: ubuntu-latest # 运行在虚拟机环境ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [16.x]
     steps:
       - uses: actions/checkout@v3  # 使用的动作。格式：userName/repoName。作用：检出仓库，获取源码。 官方actions库：https://github.com/actions
         with:
           fetch-depth: 0
       - name: Use Node.js ${{ matrix.node-version }} # 步骤2
-        uses: actions/setup-node@v1 # 作用：安装nodejs
+        uses: actions/setup-node@v2 # 作用：安装nodejs
         with:
           node-version: ${{ matrix.node-version }} # 版本
       - name: Build-and-deploy # 步骤3
         run: |
           remote_addr=`git remote get-url --push origin`
-          commit_info=`git describe --all --always --long`
+          commit_info=`git log -1 --pretty=%B`
           user_name=`git log -1 --pretty=format:'%an'`
           user_email=`git log -1 --pretty=format:'%ae'`
           deploy_branch=gh-pages
@@ -40,40 +37,10 @@ jobs:
           git config user.name ${user_name}
           git config user.email ${user_email}
           git add -A
-          git commit -m "auto deploy, $commit_info"
+          git commit -m "$commit_info"
           remote_addr=`echo $remote_addr | awk -F'://' '{print $2}'`
           remote_addr=https://${user_name}:${{secrets.GITHUB_TOKEN}}@${remote_addr}
           git remote add origin ${remote_addr}
           git push origin HEAD:$deploy_branch --force # 推送到github $deploy_branch分支
-      - name: Print versions
-        run: |
-          git --version
-          node --version
-          npm --version
-          npx commitlint --version
-      - name: Install commitlint
-        run: npm ci
-
-      - name: Validate current commit (last commit) with commitlint
-        if: github.event_name == 'push'
-        run: npx commitlint --from HEAD~1 --to HEAD --verbose
-
-      - name: Validate PR commits with commitlint
-        if: github.event_name == 'pull_request'
-        run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
-      
-      - name: Run standard-version
-        run: npx standard-version --skip.commit -m "%s [skip ci]"
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          force: true
-
-      - name: Create new tag
-        run: |
-          git tag -a $(npx -q semver --preid beta $(npx -q semver --increment prerelease $(git describe --abbrev=0 --tags --match "v[0-9]*" HEAD))) -m "Version $(git describe --abbrev=0 --tags --match "v[0-9]*" HEAD)"
-          git push --tags
-      # 只提交到github pages也可以使用github-pages-deploy-action，详见: https://github.com/JamesIves/github-pages-deploy-action
+      - name: Delete directory
+        run: rm -rf docs/.vuepress/dist
