@@ -53,7 +53,7 @@ jobs:
         with:
           title: "$commit_info"
           body: "This pull request adds a new feature to the project."
-          branch: refs/heads/feat-test
+          branch: feat-test
           base: main
           token: ${{ secrets.GITHUB_TOKEN }}
       
@@ -69,6 +69,6 @@ jobs:
 
       - name: Create new tag
         run: |
-          git tag -a $(npx -q semver --preid beta $(npx -q semver --increment prerelease $(git describe --abbrev=0 --tags --match "v[0-9]*" HEAD))) -m "Version $(git describe --abbrev=0 --tags --match "v[0-9]*" HEAD)"
+          git tag -a git show HEAD:package.json | grep version | awk '{print $2}' | sed 's/[",]//g' -m "Version $(git describe --abbrev=0 --tags --match "v[0-9]*" HEAD)"
           git push --tags
       # 只提交到github pages也可以使用github-pages-deploy-action，详见: https://github.com/JamesIves/github-pages-deploy-action
