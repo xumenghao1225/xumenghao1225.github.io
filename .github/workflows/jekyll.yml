@@ -48,14 +48,14 @@ jobs:
         run: |
           git checkout main
 
-      - name: Create pull request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          title: "$commit_info"
-          body: "This pull request adds a new feature to the project."
-          branch: feat-test
-          base: main
-          token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Create pull request
+      #   uses: peter-evans/create-pull-request@v3
+      #   with:
+      #     title: "$commit_info"
+      #     body: "This pull request adds a new feature to the project."
+      #     branch: feat-test
+      #     base: main
+      #     token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Run standard-version
         run: npx standard-version --skip.commit -m "%s [skip ci]"
