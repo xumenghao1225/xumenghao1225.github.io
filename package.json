@@ -2,8 +2,13 @@
   "name": "theme-vdoing-blog",
   "version": "1.1.1",
   "scripts": {
-    "serve": "node --max_old_space_size=4096 ./node_modules/vuepress/cli.js dev docs",
-    "build": "node --max_old_space_size=4096 ./node_modules/vuepress/cli.js build docs",
+    "dev": "set NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=4096 ./node_modules/vuepress/cli.js dev docs",
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=4096 ./node_modules/vuepress/cli.js build docs",
+    "predev": "node utils/check.js dev && vdoing",
+    "prebuild": "node utils/check.js build && vdoing",
+    "deploy": "bash deploy.sh",
+    "publish": "cd ./vdoing && npm publish && cd .. && yarn updateTheme",
+    "updateTheme": "yarn remove vuepress-theme-vdoing && rm -rf node_modules && yarn && yarn add vuepress-theme-vdoing -D",
     "commit": "git-cz",
     "editFm": "node utils/editFrontmatter.js"
   },
@@ -13,11 +18,11 @@
     "commitlint": "^17.5.0",
     "conventional-changelog-conventionalcommits": "^5.0.0",
     "cz-conventional-changelog": "^3.3.0",
+    "standard-version": "^9.5.0",
     "dayjs": "^1.9.7",
     "inquirer": "^7.1.0",
     "json2yaml": "^1.1.0",
-    "standard-version": "^9.5.0",
-    "vuepress": "1.9.5",
+    "vuepress": "1.9.9",
     "vuepress-plugin-baidu-autopush": "^1.0.1",
     "vuepress-plugin-baidu-tongji": "^1.0.1",
     "vuepress-plugin-comment": "^0.7.3",
@@ -27,7 +32,7 @@
     "vuepress-plugin-sitemap": "^2.3.1",
     "vuepress-plugin-thirdparty-search": "^1.0.2",
     "vuepress-plugin-zooming": "^1.1.7",
-    "vuepress-theme-vdoing": "^1.12.8",
+    "vuepress-theme-vdoing": "^1.12.9",
     "yamljs": "^0.3.0"
   },
   "config": {
