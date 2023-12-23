@@ -3,7 +3,7 @@
   "version": "1.1.1",
   "scripts": {
     "serve": "node --max_old_space_size=4096 ./node_modules/vuepress/cli.js dev docs",
-    "build": "node --max_old_space_size=4096 ./node_modules/vuepress/cli.js build docs",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=4096 ./node_modules/vuepress/cli.js build docs",
     "commit": "git-cz",
     "editFm": "node utils/editFrontmatter.js"
   },
